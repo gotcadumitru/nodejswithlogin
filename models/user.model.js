@@ -23,6 +23,8 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    isAccConfirmed: Boolean,
+    confirmRegisterToken:String,
     resetPasswordToken: String,
     
 

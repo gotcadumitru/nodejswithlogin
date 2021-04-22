@@ -6,7 +6,11 @@ const User = require('../models/user.model');
 const { sendMail } = require('../utils/sendMail');
 const { registerValidate, loginValidate } = require('../validation');
 const checkToken = require('./verifyToken');
+const { OAuth2Client } = require('google-auth-library');
+const { default: fetch } = require('node-fetch');
 const router = require('express').Router();
+
+const client = new OAuth2Client("1057553385734-97f7heo0s1n4gvpvqa9q8qf6iati0rtd.apps.googleusercontent.com");
 
 router.post('/register', async (req, res) => {
 
@@ -30,13 +34,40 @@ router.post('/register', async (req, res) => {
     //Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await hash(password, salt);
+    const isAccConfirmed = false;
 
-    const newUser = new User({ name, email, password: hashedPassword })
+    const confirmToken = crypto.randomBytes(20).toString('hex');
+
+    const confirmRegisterToken = crypto.createHash("sha256").update(confirmToken).digest('hex');
+    const newUser = new User({ name, email, password: hashedPassword,isAccConfirmed,confirmRegisterToken})
+
     try {
         const savedUser = await newUser.save()
+        const resetUrl = `https://localhost:3000/auth/confirmRegister/${confirmToken}`;
 
+        const message = `
+        <h1>You have requested a registration</h1>
+        <p>Please go to this link to confirm your email</p>
+        <a href=${resetUrl} clicktracking=off >${resetUrl}</a>
+        `
+        try {
+            await sendMail({
+                to: savedUser.email,
+                subject: "Confirm Registration",
+                text: message,
+            })
+        } catch (err) {
+            findUser.resetPasswordToken = undefined;
+            await findUser.save();
+
+            res.status(400).json({
+                succes: false,
+                error: 'Email could not be send'
+            })
+        }
+        
         const token = jwt.sign({ _id: savedUser._id }, process.env.TOKEN_SECRET);
-        res.header('auth-token', token).json({
+        res.json({
             succes: true,
             user: savedUser,
             token: token,
@@ -72,16 +103,137 @@ router.post('/login', async (req, res) => {
     if (!validPass) {
         return res.status(400).json({
             succes: false,
-            error: 'Invaid password',
+            error: '"Password" or email is invalid',
         });
     }
 
     //create and assign a token
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-    res.header('auth-token', token).json({
+    res.json({
         succes: true,
         token: token,
     })
+});
+
+router.post('/googlelogin', async (req, res) => {
+
+    const tokenId = req.body.token;
+    client.verifyIdToken({ idToken: tokenId, audience: "1057553385734-97f7heo0s1n4gvpvqa9q8qf6iati0rtd.apps.googleusercontent.com" }).then(
+        async response => {
+
+            const { email_verified, name, email } = response.payload;
+            if (email_verified) {
+                try {
+                    const user = await User.findOne({ email: email })
+                    if (!!user) {
+
+                        const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+                        res.status(200).json({
+                            succes: true,
+                            token: token,
+                        })
+                    } else {
+                        const password = email + process.env.TOKEN_SECRET;
+                        const isAccConfirmed = true;
+                        let newUser = new User({ name, email, password,isAccConfirmed });
+                        try {
+                            const newSavedUser = await newUser.save()
+
+                            const token = jwt.sign({ _id: newSavedUser._id }, process.env.TOKEN_SECRET);
+                            res.status(200).json({
+                                succes: true,
+                                token: token,
+                            })
+                        } catch (err) {
+                            res.status(400).json({
+                                succes: false,
+                                error: 'Somthing was wrong1'
+                            })
+                        }
+                    }
+                } catch (err) {
+
+                    res.status(400).json({
+                        succes: false,
+                        error: 'Somthing was wrong2'
+                    })
+                }
+            }
+        }
+    )
+});
+
+router.post('/facebooklogin', async (req, res) => {
+
+    const { accessToken, userID } = req.body;
+    const urlGraphFacebook = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+    try {
+        const resJSON = await fetch(urlGraphFacebook, {
+            method: "GET"
+        })
+        try {
+            const response = await resJSON.json();
+            const { email, name } = response;
+            if (email) {
+
+                try {
+                    const user = await User.findOne({ email: email })
+                    if (!!user) {
+
+                        const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+                        return res.status(200).json({
+                            succes: true,
+                            token: token,
+                        })
+                    } else {
+
+                        const password = email + process.env.TOKEN_SECRET;
+                        const isAccConfirmed = true;
+                        let newUser = new User({ name, email, password,isAccConfirmed });
+                        try {
+                            const newSavedUser = await newUser.save()
+
+                            const token = jwt.sign({ _id: newSavedUser._id }, process.env.TOKEN_SECRET);
+                            res.status(200).json({
+                                succes: true,
+                                token: token,
+                            })
+                        } catch (err) {
+                            res.status(400).json({
+                                succes: false,
+                                error: 'Somthing was wrong1'
+                            })
+                        }
+                    }
+                } catch (err) {
+
+                    res.status(400).json({
+                        succes: false,
+                        error: 'Somthing was wrong2'
+                    })
+                }
+            } else {
+
+                res.status(400).json({
+                    succes: false,
+                    error: 'Somthing was wrong3'
+                })
+            }
+
+        } catch (err) {
+            res.status(400).json({
+                succes: false,
+                error: 'Somthing was wrong4'
+            })
+        }
+    } catch (err) {
+
+        res.status(400).json({
+            succes: false,
+            error: 'Somthing was wrong5'
+        })
+    }
+
 });
 
 
@@ -99,7 +251,7 @@ router.post('/forgotpassword', async (req, res) => {
         findUser.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest('hex');
         const savedUser = await findUser.save();
 
-        const resetUrl = `http://localhost:3000/auth/resetpassword/${resetToken}`;
+        const resetUrl = `https://localhost:3000/auth/resetpassword/${resetToken}`;
 
         const message = `
         <h1>You have requested a new password reset</h1>
@@ -134,7 +286,15 @@ router.post('/forgotpassword', async (req, res) => {
     }
 })
 router.post('/resetpassword/:resetToken', async (req, res) => {
+
     const resetPasswordToken = crypto.createHash("sha256").update(req.params.resetToken).digest("hex");
+    const { error } = loginValidate(req.body);
+    if (error) {
+        return res.status(400).json({
+            succes: false,
+            error: error.details[0].message,
+        })
+    }
     try {
         const findUser = await User.findOne({ resetPasswordToken });
         if (!findUser) {
@@ -161,19 +321,52 @@ router.post('/resetpassword/:resetToken', async (req, res) => {
 
     }
 });
+router.post('/confirmRegister/:confirmRegisterToken', async (req, res) => {
 
-router.get('/me', checkToken,async (req, res) => {
-    if(req.user){
+    const confirmRegisterToken = crypto.createHash("sha256").update(req.params.confirmRegisterToken).digest("hex");
+
+    try {
+        const findUser = await User.findOne({ confirmRegisterToken });
+        if (!findUser) {
+            return res.status(400).json({
+                succes: false,
+                error: 'Invalid Confirm Register Token'
+            })
+        }
+
+        findUser.isAccConfirmed = true;
+        findUser.confirmRegisterToken = "";
+        await findUser.save();
+        return res.status(200).json({
+            succes: true,
+            data: 'Account succesful confirmed'
+        })
+    } catch (error) {
+        return res.status(400).json({
+            succes: false,
+            error: "error"
+        })
+
+    }
+});
+
+router.get('/me', checkToken, async (req, res) => {
+    if (req.user) {
         res.status(200).json({
             succes: true,
-            user: req.user,
+            user: {
+                name: req.user.name,
+                email: req.user.email,
+                isAccConfirmed: req.user.isAccConfirmed,
+
+            },
         })
-    }else{
+    } else {
         return res.status(400).json({
             succes: false,
             error: "Acces denied"
         })
-        }
+    }
 });
 
 module.exports = router;

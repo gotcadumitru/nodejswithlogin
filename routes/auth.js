@@ -14,7 +14,7 @@ const client = new OAuth2Client("1057553385734-97f7heo0s1n4gvpvqa9q8qf6iati0rtd.
 
 router.post('/register', async (req, res) => {
 
-    const { name, email, password } = req.body;
+    const { name,surname, email, password } = req.body;
 
     const { error } = registerValidate(req.body);
 
@@ -39,7 +39,7 @@ router.post('/register', async (req, res) => {
     const confirmToken = crypto.randomBytes(20).toString('hex');
 
     const confirmRegisterToken = crypto.createHash("sha256").update(confirmToken).digest('hex');
-    const newUser = new User({ name, email, password: hashedPassword,isAccConfirmed,confirmRegisterToken})
+    const newUser = new User({ name,surname, email, password: hashedPassword,isAccConfirmed,confirmRegisterToken})
 
     try {
         const savedUser = await newUser.save()
@@ -66,11 +66,9 @@ router.post('/register', async (req, res) => {
             })
         }
         
-        const token = jwt.sign({ _id: savedUser._id }, process.env.TOKEN_SECRET);
         res.json({
             succes: true,
-            user: savedUser,
-            token: token,
+            error: "A confirmation email was sent to your email",
         })
     } catch (err) {
         res.status(400).json({
@@ -121,7 +119,11 @@ router.post('/googlelogin', async (req, res) => {
     client.verifyIdToken({ idToken: tokenId, audience: "1057553385734-97f7heo0s1n4gvpvqa9q8qf6iati0rtd.apps.googleusercontent.com" }).then(
         async response => {
 
-            const { email_verified, name, email } = response.payload;
+            const { email_verified, email } = response.payload;
+            const fullName = response.payload.name.split(' ');
+            const surname = fullName[0];
+            const name = fullName[1];
+
             if (email_verified) {
                 try {
                     const user = await User.findOne({ email: email })
@@ -135,7 +137,7 @@ router.post('/googlelogin', async (req, res) => {
                     } else {
                         const password = email + process.env.TOKEN_SECRET;
                         const isAccConfirmed = true;
-                        let newUser = new User({ name, email, password,isAccConfirmed });
+                        let newUser = new User({ name,surname, email, password,isAccConfirmed });
                         try {
                             const newSavedUser = await newUser.save()
 
@@ -173,13 +175,19 @@ router.post('/facebooklogin', async (req, res) => {
         })
         try {
             const response = await resJSON.json();
-            const { email, name } = response;
+            const { email } = response;
+            const fullName = response.name.split(' ');
+            const surname = fullName[0];
+            const name = fullName[1];
             if (email) {
 
                 try {
                     const user = await User.findOne({ email: email })
                     if (!!user) {
-
+                        if(user.isAccConfirmed==false){
+                            user.isAccConfirmed = true
+                            await user.save()
+                        }
                         const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
                         return res.status(200).json({
                             succes: true,
@@ -189,7 +197,7 @@ router.post('/facebooklogin', async (req, res) => {
 
                         const password = email + process.env.TOKEN_SECRET;
                         const isAccConfirmed = true;
-                        let newUser = new User({ name, email, password,isAccConfirmed });
+                        let newUser = new User({ name,surname, email, password,isAccConfirmed });
                         try {
                             const newSavedUser = await newUser.save()
 
@@ -325,6 +333,7 @@ router.post('/confirmRegister/:confirmRegisterToken', async (req, res) => {
 
     const confirmRegisterToken = crypto.createHash("sha256").update(req.params.confirmRegisterToken).digest("hex");
 
+
     try {
         const findUser = await User.findOne({ confirmRegisterToken });
         if (!findUser) {
@@ -336,9 +345,11 @@ router.post('/confirmRegister/:confirmRegisterToken', async (req, res) => {
 
         findUser.isAccConfirmed = true;
         findUser.confirmRegisterToken = "";
+        const token = jwt.sign({ _id: findUser._id }, process.env.TOKEN_SECRET);
         await findUser.save();
         return res.status(200).json({
             succes: true,
+            token: token,
             data: 'Account succesful confirmed'
         })
     } catch (error) {
@@ -356,6 +367,7 @@ router.get('/me', checkToken, async (req, res) => {
             succes: true,
             user: {
                 name: req.user.name,
+                surname: req.user.surname,
                 email: req.user.email,
                 isAccConfirmed: req.user.isAccConfirmed,
 

@@ -7,7 +7,12 @@ const userSchema = new Schema({
     name: {
         type: String, //tipul
         required: true, //
-        minlength: 3,
+        minlength: 2,
+    },
+    surname:{
+        type: String, //tipul
+        required: true, //
+        minlength: 2,
     },
     email: {
         type: String, //tipul

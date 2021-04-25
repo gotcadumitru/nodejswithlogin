@@ -22,9 +22,11 @@ connection.once('open', () => {
 });
 const exercisesRouter = require('./routes/exercises');
 const authRouter = require('./routes/auth');
+const CompanyRouter = require('./routes/companies')
 
 app.use('/api/exercises',exercisesRouter);
 app.use('/api/auth',authRouter);
+app.use('/api/companies',CompanyRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening on port port!`)

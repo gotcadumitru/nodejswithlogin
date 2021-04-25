@@ -3,7 +3,8 @@ const User = require('../models/user.model');
 
 const checkToken =async (req,res,next)=>{
     const token = req.header('auth-token');
-    if(token===null) return res.status(400).send({
+    console.log(token);
+    if(token==null) return res.status(400).send({
         succes: false,
         error: 'Acces Denied',
     })
@@ -18,15 +19,16 @@ const checkToken =async (req,res,next)=>{
 
                 return res.status(404).send({
                     succes: false,
-                    error: "No user with this id",
+                    error: "Invalid Token",
                 })
             }
         }
         next();
     }catch(err){
-        res.status(400).send({
+        console.log(err)
+        return res.status(400).send({
             succes: false,
-            error: "acesata eroare",
+            error: "Invalid Token",
         })
     }
 }

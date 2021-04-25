@@ -28,6 +28,7 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    companiesid: Array,
     isAccConfirmed: Boolean,
     confirmRegisterToken:String,
     resetPasswordToken: String,

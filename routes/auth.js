@@ -369,6 +369,7 @@ router.get('/me', checkToken, async (req, res) => {
                 name: req.user.name,
                 surname: req.user.surname,
                 email: req.user.email,
+                companies: req.user.companiesid,
                 isAccConfirmed: req.user.isAccConfirmed,
 
             },

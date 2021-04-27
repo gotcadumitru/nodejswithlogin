@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 5000;
 
-
 app.use(cors());
 app.use(express.json());
 
@@ -20,13 +19,14 @@ const connection = mongoose.connection;
 connection.once('open', () => {
     console.log('Mongo DB connect success');
 });
-const exercisesRouter = require('./routes/exercises');
+
 const authRouter = require('./routes/auth');
 const CompanyRouter = require('./routes/companies')
+const ServiceRouter = require('./routes/services')
 
-app.use('/api/exercises',exercisesRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/companies',CompanyRouter);
+app.use('/api/services',ServiceRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening on port port!`)

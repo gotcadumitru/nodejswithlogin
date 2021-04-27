@@ -35,9 +35,7 @@ exports.sendMail = async (option) => {
 
     transporter.sendMail(mailOptions,(err,info)=>{
         if(err){
-            // console.log(error);
         }else{
-            // console.log(info);
         }
     })
     }catch(err){

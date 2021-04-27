@@ -3,7 +3,6 @@ const User = require('../models/user.model');
 
 const checkToken =async (req,res,next)=>{
     const token = req.header('auth-token');
-    console.log(token);
     if(token==null) return res.status(400).send({
         succes: false,
         error: 'Acces Denied',

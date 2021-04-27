@@ -6,6 +6,7 @@ const {
 
 const CompanySchema = new Schema({
     name: String,
+    userID: String,
     imageURL: String,
     description: String,
     servicesid: Array,

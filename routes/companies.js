@@ -1,4 +1,5 @@
 const { isValidObjectId } = require("mongoose");
+const { find } = require("../models/companies.model");
 const Company = require("../models/companies.model");
 const User = require("../models/user.model");
 const checkToken = require("./verifyToken");
@@ -43,6 +44,7 @@ router.post('/add', checkToken, async (req, res) => {
         return res.status(200).json({
             succes: true,
             message: "Company was added",
+            data: savedCompany,
         })
     
 })
@@ -55,7 +57,7 @@ router.post('/edit/:companyID', checkToken, async (req, res) => {
         return res.status(200).json({
             succes: false,
             error: "Incorrect company ID",
-        })
+        });
      }
 
         const { name, imageURL, description } = req.body;
@@ -115,6 +117,80 @@ router.delete('/delete/:companyID', checkToken, async (req, res) => {
     })
     
 });
+
+router.post('/addService/:companyID', checkToken, async (req, res) => {
+    const user = req.user;
+    const {companyID} = req.params;
+    const { services} = req.body;
+    try{
+
+        const findCompanie = await Company.findById(companyID);
+        if (findCompanie) {
+            
+            findCompanie.services.push(...services)
+            const savedCompany = await findCompanie.save();
+            return res.status(200).json({
+                succes: true,
+                message: "Service was added",
+            });
+
+            
+            
+        }
+        return res.status(400).json({
+            succes: false,
+            message: "Service error",
+        });
+    }catch(err){
+        return res.status(200).json({
+            succes: false,
+            message: err,
+        });
+    }
+})
+
+router.post('/editServices/:companyID', checkToken, async (req, res) => {
+    const user = req.user;
+    const {companyID} = req.params;
+    const { services,servicesID} = req.body;
+    try{
+
+        const findCompanie = await Company.findById(companyID);
+        if (findCompanie) {
+            
+            findCompanie.services = findCompanie.services.map(service=>{
+                const searchServiceIndex = servicesID.indexOf(service._id.toString());
+                console.log(servicesID);
+                console.log(searchServiceIndex);
+                console.log(service._id.toString());
+                if(searchServiceIndex!==-1){
+                    return services[searchServiceIndex];
+                }
+                return service
+
+
+            })
+            console.log(findCompanie.services[0]);
+            const savedCompany = await findCompanie.save();
+            return res.status(200).json({
+                succes: true,
+                message: "Service was changed",
+            });
+
+            
+            
+        }
+        return res.status(400).json({
+            succes: false,
+            message: "Service error",
+        });
+    }catch(err){
+        return res.status(200).json({
+            succes: false,
+            message: err,
+        });
+    }
+})
 
 
 

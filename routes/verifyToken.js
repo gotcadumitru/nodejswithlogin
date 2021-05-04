@@ -24,7 +24,6 @@ const checkToken =async (req,res,next)=>{
         }
         next();
     }catch(err){
-        console.log(err)
         return res.status(400).send({
             succes: false,
             error: "Invalid Token",

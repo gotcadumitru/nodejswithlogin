@@ -2,6 +2,8 @@ const { isValidObjectId } = require("mongoose");
 const { find } = require("../models/companies.model");
 const Company = require("../models/companies.model");
 const User = require("../models/user.model");
+const { sendMail } = require("../utils/sendMail");
+const { reservationValidate } = require("../validation");
 const checkToken = require("./verifyToken");
 const router = require("express").Router();
 
@@ -118,6 +120,39 @@ router.delete('/delete/:companyID', checkToken, async (req, res) => {
     
 });
 
+router.delete('/deleteService/:companyID/:serviceID', checkToken, async (req, res) => {
+    const user = req.user;
+
+    const {companyID,serviceID} = req.params;
+
+    if(!isValidObjectId(companyID) || !isValidObjectId(serviceID)){
+        return res.status(200).json({
+            succes: false,
+            error: "Incorrect company ID",
+        });
+     }
+
+    const findCompanie = await Company.findById(companyID);
+    if (findCompanie) {
+
+         findCompanie.services = findCompanie.services.filter(service=>{
+             
+                
+                return service._id.toString() != serviceID
+            })
+            const savedCompany = await findCompanie.save();
+            return res.status(200).json({
+                succes: true,
+                message: "Service was deleted",
+            });
+    }
+    return res.status(200).json({
+        succes: true,
+        message: "You don't have this company",
+    })
+    
+});
+
 router.post('/addService/:companyID', checkToken, async (req, res) => {
     const user = req.user;
     const {companyID} = req.params;
@@ -160,17 +195,15 @@ router.post('/editServices/:companyID', checkToken, async (req, res) => {
             
             findCompanie.services = findCompanie.services.map(service=>{
                 const searchServiceIndex = servicesID.indexOf(service._id.toString());
-                console.log(servicesID);
-                console.log(searchServiceIndex);
-                console.log(service._id.toString());
                 if(searchServiceIndex!==-1){
-                    return services[searchServiceIndex];
+
+                    services[searchServiceIndex].periods.byGuests = service.periods.byGuests;
+                    return  services[searchServiceIndex]
                 }
                 return service
 
 
             })
-            console.log(findCompanie.services[0]);
             const savedCompany = await findCompanie.save();
             return res.status(200).json({
                 succes: true,
@@ -192,7 +225,71 @@ router.post('/editServices/:companyID', checkToken, async (req, res) => {
     }
 })
 
+router.post('/makeReservation/:companyID/:serviceID', async (req, res) => {
+    const {companyID,serviceID} = req.params;
 
+    const {email,firstName,guestNumber,lastName,phone,time} = req.body;
+
+
+    if(!isValidObjectId(companyID) || !isValidObjectId(serviceID)){
+        return res.status(200).json({
+            succes: false,
+            error: "Incorrect company/service ID",
+        });
+    }
+
+
+    
+    const { error } = reservationValidate(req.body);
+    if (error) {
+        return res.status(400).json({
+            succes: false,
+            error: error.details[0].message,
+        });
+    }
+    
+
+    const findCompanie = await Company.findById(companyID);
+    if (findCompanie) {
+
+         findCompanie.services = findCompanie.services.map(service=>{
+
+                if(service._id.toString() === serviceID){
+                    service.periods.byGuests.push({
+                        ...req.body,
+                    })
+                }
+                return service
+
+            })
+
+            try {
+                await sendMail({
+                    to: email,
+                    subject: "Confirm Reservation",
+                    text: `Hi ${lastName}, Appointment confirmed with company ${findCompanie.name} on ${new Date(time).toString().split(' ').slice(0,5).join(' ').split(':').slice(0,2).join(':')}. please find the details below`,
+                })
+            } catch (err) {
+                findUser.resetPasswordToken = undefined;
+                await findUser.save();
+    
+                res.status(400).json({
+                    succes: false,
+                    error: 'Email could not be send'
+                })
+            }
+
+            const savedCompany = await findCompanie.save();
+            return res.status(200).json({
+                succes: true,
+                message: "Reservation was added",
+            });
+    }
+    return res.status(200).json({
+        succes: true,
+        message: "Inexistent company/service",
+    })
+})
 
 
 module.exports = router;

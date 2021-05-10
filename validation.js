@@ -19,4 +19,17 @@ exports.loginValidate = (data)=>{
 
     return schema.validate(data);
 }
+exports.reservationValidate = (data)=>{
+
+    const schema = Joi.object({
+        email: Joi.required(),
+        firstName: Joi.required(),
+        guestNumber: Joi.required(),
+        lastName: Joi.required(),
+        phone: Joi.required(),
+        time: Joi.required(),
+    });
+
+    return schema.validate(data);
+}
 

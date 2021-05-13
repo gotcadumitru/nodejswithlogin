@@ -270,8 +270,6 @@ router.post('/makeReservation/:companyID/:serviceID', async (req, res) => {
                     text: `Hi ${lastName}, Appointment confirmed with company ${findCompanie.name} on ${new Date(time).toString().split(' ').slice(0,5).join(' ').split(':').slice(0,2).join(':')}. please find the details below`,
                 })
             } catch (err) {
-                findUser.resetPasswordToken = undefined;
-                await findUser.save();
     
                 res.status(400).json({
                     succes: false,

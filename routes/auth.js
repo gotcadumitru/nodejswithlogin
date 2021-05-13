@@ -296,13 +296,7 @@ router.post('/forgotpassword', async (req, res) => {
 router.post('/resetpassword/:resetToken', async (req, res) => {
 
     const resetPasswordToken = crypto.createHash("sha256").update(req.params.resetToken).digest("hex");
-    const { error } = loginValidate(req.body);
-    if (error) {
-        return res.status(400).json({
-            succes: false,
-            error: error.details[0].message,
-        })
-    }
+
     try {
         const findUser = await User.findOne({ resetPasswordToken });
         if (!findUser) {

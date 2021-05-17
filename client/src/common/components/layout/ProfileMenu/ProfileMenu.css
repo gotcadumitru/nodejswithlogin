@@ -1,0 +1,30 @@
+.profileMenu{
+    background: white;
+}
+.companyName{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+}
+.menuItem{
+    display: flex;
+    height: 56px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.item_logo{
+    width: 20px;
+    margin-right: 10px;
+}
+.active-menu-item{
+    background-color: #f1f5f8;
+}
+.menu-item-container{
+    display: flex;
+    width: 150px;
+}
+.blogo{
+    margin-right: 10px;
+}

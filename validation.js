@@ -5,7 +5,7 @@ exports.registerValidate = (data)=>{
     const schema = Joi.object({
         name: Joi.string().min(2).max(100).required(),
         surname: Joi.string().min(2).max(100).required(),
-        email: Joi.string().max(100).required().email(),
+        email: Joi.string().max(100).required(),
         password: Joi.string().min(6).required(),
     });
     return schema.validate(data);
@@ -13,7 +13,7 @@ exports.registerValidate = (data)=>{
 exports.loginValidate = (data)=>{
 
     const schema = Joi.object({
-        email: Joi.string().max(100).required().email(),
+        email: Joi.string().max(100).required(),
         password: Joi.string().min(6).required(),
     });
 

@@ -262,12 +262,12 @@ router.post('/makeReservation/:companyID/:serviceID', async (req, res) => {
                 return service
 
             })
-
+            const reservMessage = `Hi ${lastName}, Appointment confirmed with company ${findCompanie.name} on ${new Date(time).toString().split(' ').slice(0,5).join(' ').split(':').slice(0,2).join(':')}. please find the details below`
             try {
                 await sendMail({
                     to: email,
                     subject: "Confirm Reservation",
-                    text: `Hi ${lastName}, Appointment confirmed with company ${findCompanie.name} on ${new Date(time).toString().split(' ').slice(0,5).join(' ').split(':').slice(0,2).join(':')}. please find the details below`,
+                    text: reservMessage,
                 })
             } catch (err) {
     
@@ -280,7 +280,7 @@ router.post('/makeReservation/:companyID/:serviceID', async (req, res) => {
             const savedCompany = await findCompanie.save();
             return res.status(200).json({
                 succes: true,
-                message: "Reservation was added",
+                message: reservMessage,
             });
     }
     return res.status(200).json({

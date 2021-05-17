@@ -1,0 +1,231 @@
+
+.add_service_container{
+    width: 90%;
+    margin: 0 auto;
+}
+.booking_container{
+    display: block;
+    width: 100%;
+}
+
+.company_booking{
+    width: 90%;
+    background-color: white;
+    padding: 15px 25px 15px 25px;
+    box-shadow: 0px 4px 30px rgba(24, 28, 75, 0.09);
+    border-radius: 10px;
+    margin-right: 5%;
+    margin-bottom: 35px;
+}
+
+.booking_table{
+    
+    width: 100%;
+}
+.booking_row_table{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+
+}
+
+
+.booking_col_table{
+    overflow: auto;
+    width: 13.333%;
+}
+.booking_col_table:nth-child(1){
+    /* text-align: center; */
+    width: 20%;
+}
+.booking_col_table:not(1){
+    text-align: center;
+}
+
+.booking_row_table:nth-child(1){
+    font-weight: 500;
+}
+.booking_row_table:nth-child(1){
+
+    background: #F1F5F8;
+    border-radius: 10px;
+    font-family: 'Rubik', sans-serif;  
+    font-style: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #333333;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+
+}
+.booking_col_table:not(1){
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 20px;
+    color: #333333;
+
+}
+
+.booking_table_subinfo{
+    font-family: 'Rubik', sans-serif;    
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #828282;
+}
+.company_booking_name{
+    font-family: 'Rubik', sans-serif; 
+    font-style: normal;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 38px;
+    letter-spacing: 0.001em;
+    color: #333333;
+}
+.company_booking_subtext{
+    font-family: 'Rubik', sans-serif; 
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.001em;
+    text-transform: uppercase;
+    color: #828282;
+    margin-bottom: 20px;
+}
+
+.navbar_icon_show{
+    cursor: pointer;
+    top: 15px;
+    left: 15px;
+    font-size: 25px;
+    color: white;
+    padding: 10px;
+    box-sizing:initial;
+    border-radius: 50%;
+    background-color: #4149b9;
+    position: fixed;
+    z-index: 1;
+}
+.profile_menu_responsive{
+    position: fixed;
+    z-index: 1;
+    box-shadow: 0px 4px 30px rgba(24, 28, 75, 0.09);
+    background: white;
+}
+.filter_icon_profile_container{
+    display: flex;
+    width: 90%;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+.filter_icon_profile{
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    border: 2px solid #EF6313;
+    color:#EF6313;
+    border-radius: 8px;
+}
+.profile_logo_image{
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+}
+
+.filter_select_input{
+    border: 1px solid #BDBDBD;
+box-sizing: border-box;
+border-radius: 10px;
+width: 100%;
+height: 45px;
+}
+.filter_select_input:placeholder{
+    margin-left: 20px;
+}
+.filter_select_input:focus{
+    outline: none;
+}
+
+.option_menu_title{
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 26px;
+    color: #333333;
+}
+.filter_btn_container,
+.option_menu_title{
+    margin-top: 30px;
+}
+.filter_form_container{
+    min-width: 500px;
+}
+@media only screen and (max-width: 1400px) {
+    .company_booking{
+        width: 98%;
+        
+    }
+}
+@media only screen and (max-width: 1300px) {
+    .company_booking{
+        width: 98%;
+    }
+    .booking_col_table:nth-child(4){
+        display: none;
+    }
+}
+@media only screen and (max-width: 1000px) {
+    .header_and_conten{
+        width: 100%;
+
+    }
+}
+@media only screen and (max-width: 1100px) {
+    .booking_col_table:nth-child(5){
+        display: none;
+    }
+    .booking_col_table:nth-child(1){
+        width: 40%;
+    }
+}
+@media only screen and (max-width: 700px) {
+    
+    .add_service_container{
+        width: 100%;
+    }
+    .filter_form_container{
+        min-width: auto;
+    }
+    .booking_col_table:nth-child(6){
+        display: none;
+    }
+    .booking_col_table{
+        width: 33.33%;
+    }
+    .company_booking{
+        width: 100%;
+    }
+    .booking_table.container{
+        padding: 0;
+    }
+}
+@media only screen and (max-width: 600px) {
+    
+    .delete_company_container{
+        padding: 0;
+    }
+    .booking_table {
+        padding: 0!important;
+    }
+}

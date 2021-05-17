@@ -1,0 +1,243 @@
+.auth_page_components {
+    position: absolute;
+    width: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #F1F5F8;
+}
+.auth_page{
+    display: flex;
+    justify-content: center;
+}
+.auth_route {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.auth_img_component{
+    width: 50%;
+    text-align: center;
+}
+.auth_big_img{
+    margin: 0 auto;
+    width: 800px;
+}
+
+.auth_image_title {
+    font-family: Rubik;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 40px;
+    line-height: 50px;
+    color: #333333;
+}
+.forgot_pass_img{
+    padding-right: 50px;
+}
+.auth_component {
+    width: 50%;
+    max-width: 570px;
+    display: flex;
+    margin: 0 auto;
+    flex-direction: column;
+    background-color: #FFF;
+    box-shadow: 0px 4px 30px rgba(24, 28, 75, 0.09);
+    border-radius: 10px;
+    padding: 70px 100px;
+    box-sizing: border-box;
+    
+}
+
+.auth_form_title {
+    text-align: center;
+    margin: 0 auto 40px auto;
+    font-family: Rubik;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 42px;
+    /* identical to box height, or 131% */
+
+    letter-spacing: 0.001em;
+
+    /* Gray 1 */
+
+    color: #333333;
+}
+
+.auth_links {
+    margin-top: 10px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #828282;
+}
+
+.auth_links a {
+    color: #2f80ed;
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth_links.forgot{
+    margin-top: 30px;
+
+    margin-bottom: 30px;
+}
+
+.facebook_lgin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 44px;
+    background: #3C5A9A;
+    box-shadow: 0px 4px 14px rgba(60, 90, 154, 0.2);
+    border-radius: 14px;
+  font-family: 'Rubik', sans-serif;
+  font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #F2F2F2;
+
+}
+
+.google_login {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 44px;
+    background-color: #FFF;
+    border: 1px solid #828282;
+    box-sizing: border-box;
+    font-family: Rubik;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #828282;
+    border-radius: 14px;
+}
+
+.login_or_text {
+    width: 100%;
+    height: 50px;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 28px;
+    position: relative;
+    background-color: white;
+}
+
+.login_or_text::after {
+    content: '';
+    width: 100%;
+    border-bottom: .1px solid #828282;
+    position: absolute;
+    left: 0;
+    top: 55%;
+    z-index: 1;
+}
+
+.login_or_line {
+    background-color: white;
+    width: auto;
+    display: inline-block;
+    z-index: 3;
+    padding: 0 5px 0 5px;
+    position: relative;
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    color: #828282;
+    margin: 0;
+}
+
+.succes_auth_message{
+    margin: 30px 0;
+    color: green;
+}
+input[type="checkbox"] {
+    margin: 0;
+}
+
+.google_logo {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.auth_check_cont {
+    display: block;
+    align-items: center;
+    align-content: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+.check_error{
+    
+    margin-left: 20px;
+    top: 20px;
+    color: red;
+}
+.auth_checkbox {
+    border: 1px solid #828282;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth_check_cont span {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #828282;
+    margin-left: 5px;
+}
+
+/* Confirm Register Page */
+.confirm_register{
+    text-align: center;
+}
+.confirm_error{
+    color: red;
+}
+.confirm_succes{
+    color: green;
+}
+
+
+@media only screen and (max-width: 1300px) {
+    .auth_page_components {
+        position: initial;
+        width: 90%;
+        top: 0;
+        left: 0;
+        transform: translate(0, 5%);
+        background-color: #F1F5F8;
+    }
+    .auth_route{
+        flex-direction: column;
+    }
+    .auth_component{
+        width: 95%;
+        padding: 20px;
+    }
+    .auth_img_component{
+        width: 95%;
+    }
+  }
+@media only screen and (max-width: 600px) {
+    .auth_image_title{
+        font-size: 30px;
+    }
+  }

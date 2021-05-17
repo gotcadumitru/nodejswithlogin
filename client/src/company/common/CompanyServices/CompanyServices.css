@@ -1,0 +1,31 @@
+.services_container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.service_input_container {
+    width: 45%;
+}
+
+.addCompanyError {
+    text-align: center;
+    color: red;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.addOtherServiceBtn {
+    display: flex;
+    justify-content: center;
+    font-family: 'Rubik', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 16px;
+    color: #4149B9;
+    margin-top: 20px;
+}
+.addOtherServiceBtn span:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

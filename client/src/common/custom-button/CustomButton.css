@@ -1,0 +1,63 @@
+.customButton {
+
+      background: #4149B9;
+      box-shadow: 0px 7px 14px 2px rgba(65, 73, 185, 0.2);
+      border-radius: 14px;
+      width: 100%;
+      height: 60px;
+      font-family: 'Rubik', sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 16px;
+      text-align: center;
+      cursor: pointer;
+      color: #F2F2F2;
+      order: 0;
+}
+.customButton span{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+}
+
+
+.profilebtn {
+      height: 46px;
+      box-shadow: 0px 4px 8px rgba(65, 73, 185, 0.14);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 14px;
+      color: #F2F2F2;
+}
+
+.whitebtn {
+      border: 1px solid #BDBDBD;
+      background: white;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      color: #828282;
+}
+.yellowbtn{
+      background: #EF6313;
+      box-shadow: 0px 10px 25px 6px rgba(239, 99, 19, 0.15);
+      border-radius: 8px;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 24px;
+      line-height: 34px;
+      letter-spacing: -0.02em;
+      color: #F2F2F2;
+      border: none;
+}
+.searchbtn{    
+      height: 47px;
+      box-shadow: 0px 4px 8px rgba(65, 73, 185, 0.14);
+      border-radius: 10px;
+      font-size: 20px;
+      line-height: 20px;
+      text-align: center;
+}

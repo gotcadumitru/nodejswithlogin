@@ -25,6 +25,7 @@ router.post('/register', async (req, res) => {
             error: 'Email already exist',
         })
     }
+
     if (error) {
         return res.status(400).json({
             succes: false,
@@ -61,14 +62,12 @@ router.post('/register', async (req, res) => {
             await findUser.save();
 
             res.status(400).json({
-                succes: false,
                 error: 'Email could not be send'
             })
         }
         
         res.json({
-            succes: true,
-            error: "A confirmation email was sent to your email",
+            message: "A confirmation email was sent to your email",
         })
     } catch (err) {
         res.status(400).json({
@@ -82,32 +81,31 @@ router.post('/login', async (req, res) => {
 
     const { email, password } = req.body;
 
-    const { error } = loginValidate(req.body);
-    if (error) {
-        return res.status(400).json({
-            succes: false,
-            error: error.details[0].message,
-        })
-    }
-
     const user = await User.findOne({ email: email });
     if (!user) {
-        return res.status(400).json({
+        return res.status(400).send({
             succes: false,
-            error: 'Email is not found',
-        })
+            error: 'Invalid email or password',
+        });
     }
     const validPass = await bcrypt.compare(password, user.password)
     if (!validPass) {
-        return res.status(400).json({
+        return res.status(400).send({
             succes: false,
-            error: '"Password" or email is invalid',
+            error: 'Invalid email or password',
         });
     }
-
+    
+    if(!user.isAccConfirmed){
+        return res.status(400).send({
+            succes: false,
+            error: 'Please confirm your email',
+        });
+        
+    }
     //create and assign a token
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-    res.json({
+    res.send({
         succes: true,
         token: token,
     })
@@ -330,6 +328,7 @@ router.post('/confirmRegister/:confirmRegisterToken', async (req, res) => {
 
     try {
         const findUser = await User.findOne({ confirmRegisterToken });
+        console.log(!findUser)
         if (!findUser) {
             return res.status(400).json({
                 succes: false,

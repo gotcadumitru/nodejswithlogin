@@ -26,6 +26,11 @@ const CompanyRouter = require('./routes/companies')
 app.use('/api/auth',authRouter);
 app.use('/api/companies',CompanyRouter);
 
+
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static('client/build'));
+}
+
 app.listen(port, () => {
     console.log(`Example app listening on port port!`)
 });

@@ -3,7 +3,7 @@ import { authToken } from "../common/helpers/token.helper";
 
 
 const instance = axios.create({
-    baseURL: "http://localhost:5000/",
+    baseURL: "/",
 })
 
 export const authAPI = {

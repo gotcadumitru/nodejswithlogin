@@ -13,8 +13,6 @@ const checkToken =async (req,res,next)=>{
         if(verified){
             const findUser = await User.findById(verified._id);
 
-            
-
             if(findUser){
                 req.user = findUser;
             }else{

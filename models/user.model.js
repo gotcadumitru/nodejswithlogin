@@ -19,6 +19,11 @@ const userSchema = new Schema({
         required: true, //
         minlength: 6,
     },
+    loginMethod: {
+        type: Number, //tipul
+        required: true, //
+
+    },
     password: {
         type: String, //tipul
         required: true, //

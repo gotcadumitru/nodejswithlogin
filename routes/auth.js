@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
     const confirmToken = crypto.randomBytes(20).toString('hex');
 
     const confirmRegisterToken = crypto.createHash("sha256").update(confirmToken).digest('hex');
-    const newUser = new User({ name,surname, email, password: hashedPassword,isAccConfirmed,confirmRegisterToken})
+    const newUser = new User({ name,surname, email, password: hashedPassword,isAccConfirmed,confirmRegisterToken,loginMethod:0})
 
     try {
         const savedUser = await newUser.save()
@@ -135,7 +135,7 @@ router.post('/googlelogin', async (req, res) => {
                     } else {
                         const password = email + process.env.TOKEN_SECRET;
                         const isAccConfirmed = true;
-                        let newUser = new User({ name,surname, email, password,isAccConfirmed });
+                        let newUser = new User({ name,surname, email, password,isAccConfirmed,loginMethod:1});
                         try {
                             const newSavedUser = await newUser.save()
 
@@ -195,7 +195,7 @@ router.post('/facebooklogin', async (req, res) => {
 
                         const password = email + process.env.TOKEN_SECRET;
                         const isAccConfirmed = true;
-                        let newUser = new User({ name,surname, email, password,isAccConfirmed });
+                        let newUser = new User({ name,surname, email, password,isAccConfirmed,loginMethod:2});
                         try {
                             const newSavedUser = await newUser.save()
 
@@ -295,6 +295,7 @@ router.post('/resetpassword/:resetToken', async (req, res) => {
 
     const resetPasswordToken = crypto.createHash("sha256").update(req.params.resetToken).digest("hex");
 
+
     try {
         const findUser = await User.findOne({ resetPasswordToken });
         if (!findUser) {
@@ -321,10 +322,47 @@ router.post('/resetpassword/:resetToken', async (req, res) => {
 
     }
 });
+
+router.post('/changepassword', checkToken, async (req, res) => {
+
+    const {user} = req;
+    const {oldPassword,newPassword} = req.body;
+
+
+    const validPass = await bcrypt.compare(oldPassword, user.password)
+    if (!validPass) {
+        return res.status(400).send({
+            succes: false,
+            error: 'Invalid password',
+        });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await hash(newPassword, salt);
+    user.password = hashedPassword;
+
+    try{
+        user.save();
+
+        return res.status(200).json({
+            succes: true,
+            data: 'Password changed successfully'
+        })
+    }catch(e){
+        return res.status(400).json({
+            succes: false,
+            error: "Error change password"
+        })
+    }
+    
+
+    
+});
+
+
 router.post('/confirmRegister/:confirmRegisterToken', async (req, res) => {
 
     const confirmRegisterToken = crypto.createHash("sha256").update(req.params.confirmRegisterToken).digest("hex");
-
 
     try {
         const findUser = await User.findOne({ confirmRegisterToken });

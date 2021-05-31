@@ -14,8 +14,8 @@ const ServiceSchema = new Schema({
     price: Number,
     
     space: Number,
-
-    workTime: Array,
+    timeEnd: String,
+    timeStart: String,
     periods: {
             byAdmin: [],
             byGuests: [],
@@ -31,8 +31,6 @@ const CompanySchema = new Schema({
 }, {
     timestamps: true,
 });
-
-
 
 const Company = model('Company', CompanySchema);
 

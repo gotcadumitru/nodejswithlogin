@@ -23,6 +23,7 @@ connection.once('open', () => {
 const authRouter = require('./routes/auth');
 const CompanyRouter = require('./routes/companies')
 
+
 app.use('/api/auth',authRouter);
 app.use('/api/companies',CompanyRouter);
 
